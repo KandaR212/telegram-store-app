@@ -3,60 +3,436 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой Магазин</title>
-    <script>
-    // --- АДРЕС ВАШЕГО API ---
-    // !!! ЗАМЕНИТЕ ЭТОТ АДРЕС НА ПУБЛИЧНЫЙ HTTPS-АДРЕС ВАШЕГО РАЗМЕЩЕННОГО СЕРВЕРА !!!
-    const API_URL = 'https://telegram-store-app.vercel.app/'; 
-    // ----------------------------
+    <title>Telegram Web App Store</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    // ... остальной код loadProducts() и displayProducts() остается без изменений
-</script>
     <style>
+        /* Использование переменных цветов Telegram */
+        :root {
+            --bg-color: var(--tg-theme-bg-color, #ffffff);
+            --secondary-bg-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
+            --text-color: var(--tg-theme-text-color, #000000);
+            --hint-color: var(--tg-theme-hint-color, #999999);
+            --button-color: var(--tg-theme-button-color, #5375c3);
+            --button-text-color: var(--tg-theme-button-text-color, #ffffff);
+            --link-color: var(--tg-theme-link-color, #2b84ff);
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
             margin: 0;
-            padding: 20px;
-            text-align: center;
-            /* Используем цвета темы Telegram для лучшей интеграции */
-            background-color: var(--tg-theme-bg-color);
-            color: var(--tg-theme-text-color);
+            padding: 10px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s;
         }
+
         h2 {
-            color: var(--tg-theme-link-color);
+            color: var(--text-color);
+            margin-bottom: 20px;
+            text-align: center;
         }
+
+        /* --- Каталог --- */
+        #catalog, #cart-view {
+            padding: 10px 0;
+        }
+
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .product-item {
+            background-color: var(--secondary-bg-color);
+            border-radius: 12px;
+            overflow: hidden;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            background-color: #ccc;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .product-info {
+            padding: 10px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .product-info h3 {
+            font-size: 16px;
+            margin: 0 0 5px;
+        }
+        
+        .product-description {
+            font-size: 12px;
+            color: var(--hint-color);
+            margin: 0 0 10px;
+            line-height: 1.3;
+        }
+
+        .product-price {
+            font-weight: bold;
+            color: var(--text-color);
+            font-size: 18px;
+            margin: 5px 0 10px;
+        }
+
+        .add-to-cart-btn {
+            background-color: var(--button-color);
+            color: var(--button-text-color);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            margin-top: auto; /* Прижимает кнопку к низу */
+        }
+        
+        /* --- Корзина --- */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: var(--secondary-bg-color);
+            border-radius: 8px;
+        }
+        
+        .cart-item-info {
+            flex-grow: 1;
+            padding-right: 10px;
+        }
+        
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .qty-btn {
+            background-color: var(--button-color);
+            color: var(--button-text-color);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 16px;
+        }
+        
+        .total-info {
+            text-align: right;
+            padding: 15px 0;
+            font-size: 18px;
+            font-weight: bold;
+            border-top: 1px solid var(--hint-color);
+            margin-top: 15px;
+        }
+
     </style>
 </head>
 <body>
-    <h2>Добро пожаловать в мой магазин!</h2>
-    <p>Это ваше первое Telegram Web App.</p>
-    <p id="user_display">Загрузка данных...</p>
+    
+    <div id="app-container">
+        
+        <div id="catalog-view">
+            <h2>🛍️ Каталог товаров</h2>
+            <div id="catalog" class="catalog-grid">
+                </div>
+        </div>
+        
+        <div id="cart-view" style="display: none;">
+            <h2>🛒 Ваша корзина</h2>
+            <div id="cart-items">
+                </div>
+            <div id="order-form">
+                <h3>Контактные данные</h3>
+                <input type="text" id="contact-name" placeholder="Ваше имя" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: 1px solid var(--hint-color); background-color: var(--secondary-bg-color); color: var(--text-color);" required>
+                <input type="text" id="delivery-address" placeholder="Адрес доставки" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: 1px solid var(--hint-color); background-color: var(--secondary-bg-color); color: var(--text-color);" required>
+            </div>
+            <div id="cart-total" class="total-info">
+                Итого: 0 руб.
+            </div>
+        </div>
+        
+    </div>
 
     <script>
-        if (window.Telegram && window.Telegram.WebApp) {
-            const WebApp = window.Telegram.WebApp;
-            
-            // 1. Сообщить Telegram, что приложение готово
+        const WebApp = window.Telegram.WebApp;
+        
+        // --- 1. НАСТРОЙКИ ---
+        // !!! ОЧЕНЬ ВАЖНО: ЗАМЕНИТЕ ЭТОТ АДРЕС НА ПУБЛИЧНЫЙ HTTPS-АДРЕС ВАШЕГО FLASK-СЕРВЕРА !!!
+        const API_URL = 'https://[ВАШ_ПУБЛИЧНЫЙ_ДОМЕН]/api/products'; 
+        
+        // Массивы для хранения данных
+        let allProducts = [];
+        let cart = JSON.parse(localStorage.getItem('telegramStoreCart')) || {}; // {itemId: {name, price, qty}}
+        let currentView = 'catalog'; // 'catalog' или 'cart'
+
+        // --- 2. ФУНКЦИИ ИНИЦИАЛИЗАЦИИ ---
+
+        function initApp() {
+            if (!WebApp.isExpanded) {
+                 WebApp.expand();
+            }
             WebApp.ready();
             
-            // 2. Получить данные пользователя (ID, имя)
-            const user = WebApp.initDataUnsafe.user;
+            // Настраиваем кнопку для переключения/оформления
+            WebApp.MainButton.show();
+            WebApp.MainButton.onClick(handleMainButtonClick);
+
+            loadProducts();
             
-            if (user) {
-                document.getElementById('user_display').innerHTML = 
-                    `Привет, <b>${user.first_name || 'Пользователь'}</b>! <br>Ваш ID: ${user.id}`;
+            // Если данные пользователя доступны, подставляем имя
+            if (WebApp.initDataUnsafe && WebApp.initDataUnsafe.user) {
+                document.getElementById('contact-name').value = 
+                    WebApp.initDataUnsafe.user.first_name || '';
+            }
+        }
+        
+        // --- 3. ЗАГРУЗКА ДАННЫХ ---
+        
+        async function loadProducts() {
+            const catalogElement = document.getElementById('catalog');
+            catalogElement.innerHTML = '<p style="text-align: center; color: var(--hint-color);">Загрузка каталога...</p>';
+            
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) {
+                    throw new Error(`Ошибка HTTP: ${response.status}`);
+                }
+                allProducts = await response.json();
+                
+                displayProducts(allProducts);
+                updateMainButton(); // Обновляем кнопку после загрузки
+            } catch (error) {
+                console.error("Не удалось загрузить товары с API:", error);
+                catalogElement.innerHTML = '<h2>❌ Не удалось загрузить каталог. Проверьте сервер.</h2>';
+                WebApp.MainButton.hide();
+            }
+        }
+
+        // --- 4. ОТОБРАЖЕНИЕ ИНТЕРФЕЙСА ---
+        
+        function displayProducts(products) {
+            const catalogElement = document.getElementById('catalog');
+            catalogElement.innerHTML = ''; 
+
+            products.forEach(product => {
+                const itemHtml = `
+                    <div class="product-item" data-id="${product.id}">
+                        <img src="${product.image_url}" alt="${product.name}" class="product-image">
+                        <div class="product-info">
+                            <div>
+                                <h3>${product.name}</h3>
+                                <p class="product-description">${product.description ? product.description.substring(0, 50) + '...' : ''}</p>
+                            </div>
+                            <p class="product-price">${(product.price || 0).toFixed(2)} руб.</p>
+                            <button class="add-to-cart-btn" onclick="addToCart('${product.id}')">
+                                ${cart[product.id] ? 'Добавлено (' + cart[product.id].qty + ')' : 'В корзину'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+                catalogElement.innerHTML += itemHtml;
+            });
+        }
+        
+        function renderCart() {
+            const cartItemsElement = document.getElementById('cart-items');
+            cartItemsElement.innerHTML = '';
+            let total = 0;
+            let cartEmpty = true;
+            
+            for (const id in cart) {
+                const item = cart[id];
+                if (item.qty > 0) {
+                    cartEmpty = false;
+                    const itemTotal = item.qty * item.price;
+                    total += itemTotal;
+                    
+                    const itemHtml = `
+                        <div class="cart-item">
+                            <div class="cart-item-info">
+                                <b>${item.name}</b><br>
+                                ${item.qty} x ${item.price.toFixed(2)} руб. = ${itemTotal.toFixed(2)} руб.
+                            </div>
+                            <div class="cart-item-controls">
+                                <button class="qty-btn" onclick="updateCartQty('${id}', -1)">-</button>
+                                <span>${item.qty}</span>
+                                <button class="qty-btn" onclick="updateCartQty('${id}', 1)">+</button>
+                            </div>
+                        </div>
+                    `;
+                    cartItemsElement.innerHTML += itemHtml;
+                }
             }
             
-            // 3. Добавление основной кнопки (для закрытия или действия)
-            WebApp.MainButton.setText('Закрыть приложение');
-            WebApp.MainButton.show();
-            WebApp.MainButton.onClick(() => {
-                WebApp.close();
-            });
-            
-        } else {
-            document.body.innerHTML = '<h2>Ошибка: Откройте это в Telegram!</h2>';
+            if (cartEmpty) {
+                cartItemsElement.innerHTML = '<p style="text-align: center; color: var(--hint-color);">Корзина пуста 😔</p>';
+                document.getElementById('order-form').style.display = 'none';
+                total = 0;
+            } else {
+                document.getElementById('order-form').style.display = 'block';
+            }
+
+            document.getElementById('cart-total').innerHTML = `Итого: ${total.toFixed(2)} руб.`;
         }
-    </script>
-</body>
-</html>
+
+        // --- 5. ЛОГИКА КОРЗИНЫ ---
+        
+        function addToCart(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+
+            if (cart[productId]) {
+                cart[productId].qty += 1;
+            } else {
+                cart[productId] = {
+                    name: product.name,
+                    price: product.price || 0,
+                    qty: 1
+                };
+            }
+            
+            saveCart();
+            
+            // Обновляем кнопку каталога
+            const btn = document.querySelector(`.product-item[data-id="${productId}"] .add-to-cart-btn`);
+            if (btn) {
+                btn.textContent = `Добавлено (${cart[productId].qty})`;
+            }
+            
+            updateMainButton();
+        }
+
+        function updateCartQty(productId, delta) {
+            if (!cart[productId]) return;
+
+            cart[productId].qty += delta;
+
+            if (cart[productId].qty <= 0) {
+                delete cart[productId];
+            }
+            
+            saveCart();
+            
+            if (currentView === 'cart') {
+                renderCart();
+            } else {
+                displayProducts(allProducts); // Обновляем кнопки в каталоге
+            }
+            updateMainButton();
+        }
+        
+        function saveCart() {
+            localStorage.setItem('telegramStoreCart', JSON.stringify(cart));
+        }
+
+        function getCartTotal() {
+            let total = 0;
+            let count = 0;
+            for (const id in cart) {
+                if (cart[id].qty > 0) {
+                    total += cart[id].qty * cart[id].price;
+                    count += cart[id].qty;
+                }
+            }
+            return { total: total, count: count };
+        }
+        
+        // --- 6. УПРАВЛЕНИЕ КНОПКОЙ ТЕЛЕГРАМ ---
+        
+        function updateMainButton() {
+            const { total, count } = getCartTotal();
+            
+            if (currentView === 'catalog' && count > 0) {
+                WebApp.MainButton.setText(`Перейти в Корзину (${count} шт. | ${total.toFixed(2)} руб.)`);
+                WebApp.MainButton.enable();
+            } else if (currentView === 'catalog' && count === 0) {
+                 WebApp.MainButton.setText(`Корзина пуста`);
+                 WebApp.MainButton.disable();
+            } else if (currentView === 'cart' && count > 0) {
+                WebApp.MainButton.setText(`Оформить заказ (${total.toFixed(2)} руб.)`);
+                WebApp.MainButton.enable();
+            } else { // Корзина пуста на странице корзины
+                WebApp.MainButton.setText(`Вернуться в каталог`);
+                WebApp.MainButton.enable();
+            }
+        }
+        
+        function handleMainButtonClick() {
+            if (currentView === 'catalog') {
+                if (getCartTotal().count > 0) {
+                    // Переход в корзину
+                    currentView = 'cart';
+                    document.getElementById('catalog-view').style.display = 'none';
+                    document.getElementById('cart-view').style.display = 'block';
+                    WebApp.BackButton.show(); // Показываем кнопку "Назад"
+                    renderCart();
+                    updateMainButton();
+                }
+            } else if (currentView === 'cart') {
+                if (getCartTotal().count > 0) {
+                    placeOrder();
+                } else {
+                    // Вернуться в каталог, если корзина пуста
+                    handleBackButtonClick(); 
+                }
+            }
+        }
+        
+        WebApp.onEvent('backButtonClicked', handleBackButtonClick);
+
+        function handleBackButtonClick() {
+             currentView = 'catalog';
+             document.getElementById('catalog-view').style.display = 'block';
+             document.getElementById('cart-view').style.display = 'none';
+             WebApp.BackButton.hide(); // Скрываем кнопку "Назад"
+             updateMainButton();
+        }
+        
+        // --- 7. ОТПРАВКА ЗАКАЗА БОТУ ---
+        
+        function placeOrder() {
+            const { total, count } = getCartTotal();
+            const contactName = document.getElementById('contact-name').value;
+            const address = document.getElementById('delivery-address').value;
+
+            if (!contactName || !address) {
+                WebApp.showAlert('Пожалуйста, заполните Имя и Адрес доставки.');
+                return;
+            }
+
+            const orderDetails = {
+                items: Object.values(cart).filter(item => item.qty > 0),
+                totalPrice: total.toFixed(2),
+                totalCount: count,
+                contactName: contactName,
+                address: address,
+                // Отправляем ID пользователя Telegram для идентификации
+                telegramUserId: WebApp.initDataUnsafe.user ? WebApp.initDataUnsafe.user.id : 'unknown'
+            };
+
+            // Преобразование данных в строку (JSON)
+            const dataToSend = JSON.stringify(orderDetails);
+
+            // Отправка данных боту
+            WebApp.sendData(dataToSend);
+
+            // Оповещение, очистка и закрытие
+            WebApp.showAlert('✅ Ваш заказ принят! Бот скоро ответит.', () => {
+                localStorage.removeItem('telegramStoreCart'); // Очищаем корзину
