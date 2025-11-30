@@ -163,6 +163,30 @@
             border: 1px solid var(--pink-medium) !important;
         }
 
+        /* НОВІ СТИЛІ для сортування */
+        .sort-controls {
+            margin-bottom: 20px; 
+            display: flex; 
+            align-items: center;
+            background-color: var(--secondary-bg-color);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .sort-controls label {
+            margin-right: 10px; 
+            font-weight: bold; 
+            color: var(--pink-text);
+        }
+        #sort-select {
+            padding: 8px; 
+            border-radius: 5px; 
+            width: 100%;
+            /* Додаткові стилі, які вже є в іншому місці, але додамо сюди, щоб було чисто */
+            background-color: var(--secondary-bg-color); 
+            border: 1px solid var(--pink-medium) !important;
+            color: var(--text-color);
+        }
+
         /* --- Модальне вікно для деталей товару --- */
         .modal {
             display: none; 
@@ -373,19 +397,44 @@
         async function loadProducts() {
             const catalogElement = document.getElementById('catalog');
             catalogElement.innerHTML = '<p style="text-align: center; color: var(--hint-color);">Завантаження каталогу...</p>';
-            
+    
+    // Отримуємо вибране значення сортування
+            const sortSelect = document.getElementById('sort-select');
+    // Якщо селектор знайдено, використовуємо його значення, інакше - дефолт
+            const selectedSortValue = sortSelect ? sortSelect.value : 'name_asc'; 
+    
+    // Розбиваємо значення на поле ('name' або 'price') та напрямок ('asc' або 'desc')
+            const [sort_by, sort_order] = selectedSortValue.split('_');
+    
             try {
-                const response = await fetch(API_URL_PRODUCTS); 
+        // Формуємо URL для запиту з параметрами сортування
+                let url = new URL(API_URL_PRODUCTS);
+                url.searchParams.append('sort_by', sort_by);
+                url.searchParams.append('sort_order', sort_order);
+
+        // Встановлення таймауту для запобігання нескінченного очікування
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 секунд таймаут
+        
+                const response = await fetch(url.toString(), { signal: controller.signal });
+                clearTimeout(timeoutId); // Очистити таймаут, якщо запит успішний
+
+        
                 if (!response.ok) {
                     throw new Error(`Помилка HTTP: ${response.status}`);
                 }
+        
                 allProducts = await response.json();
-                
+        
                 displayProducts(allProducts);
                 updateMainButton(); 
             } catch (error) {
                 console.error("Не вдалося завантажити товари з API:", error);
-                catalogElement.innerHTML = '<h2>❌ Не вдалося завантажити каталог. Перевірте сервер.</h2>';
+                if (error.name === 'AbortError') {
+                    catalogElement.innerHTML = '<h2>❌ Перевищено час очікування. Перевірте з\'єднання з сервером.</h2>';
+                } else {
+                    catalogElement.innerHTML = '<h2>❌ Не вдалося завантажити каталог. Перевірте сервер.</h2>';
+                }
                 WebApp.MainButton.hide();
             }
         }
