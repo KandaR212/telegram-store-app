@@ -325,10 +325,20 @@
         
         <div id="catalog-view">
             <h2>🛍️ Каталог товарів</h2>
+
+            <div class="sort-controls">
+                <label for="sort-select">Сортувати:</label>
+                <select id="sort-select" onchange="loadProducts()">
+                    <option value="name_asc">Назва (А-Я)</option>
+                    <option value="name_desc">Назва (Я-А)</option>
+                    <option value="price_asc">Ціна (від низької)</option>
+                    <option value="price_desc">Ціна (від високої)</option>
+                </select>
+            </div>
             <div id="catalog" class="catalog-grid">
-                </div>
+            </div>
         </div>
-        
+            
         <div id="cart-view" style="display: none;">
             <h2>🛒 Ваш кошик</h2>
             <div id="cart-items">
