@@ -97,7 +97,7 @@
         🧸 Каталог Товаров
     </h1>
 
-    <!-- ПАНЕЛЬ УПРАВЛЕНИЯ (Сортировка, Поиск, Валюта) -->
+    <!-- ПАНЕЛЬ УПРАВЛЕНИЯ (Сортировка, Поиск) -->
     <div class="mb-6 p-4 card rounded-xl shadow-lg flex flex-col sm:flex-row gap-4">
         
         <!-- Поиск -->
@@ -105,33 +105,23 @@
             type="text" 
             id="search-input" 
             placeholder="🔎 Поиск по названию..."
-            class="w-full sm:w-1/2 p-2 rounded-lg bg-tg-bg border border-tg-hint/50 focus:ring-tg-link focus:border-tg-link transition text-tg-text"
+            class="w-full sm:w-2/3 p-2 rounded-lg bg-tg-bg border border-tg-hint/50 focus:ring-tg-link focus:border-tg-link transition text-tg-text"
             oninput="handleSearch()"
         />
 
-        <div class="flex gap-4 w-full sm:w-1/2">
-            <!-- Сортировка -->
-            <select 
-                id="sort-select" 
-                class="w-1/2 p-2 rounded-lg bg-tg-bg border border-tg-hint/50 focus:ring-tg-link focus:border-tg-link transition text-tg-text"
-                onchange="fetchProducts()"
-            >
-                <option value="name_asc">Название (А-Я)</option>
-                <option value="name_desc">Название (Я-А)</option>
-                <option value="price_asc">Цена (сначала дешевые)</option>
-                <option value="price_desc">Цена (сначала дорогие)</option>
-            </select>
+        <!-- Сортировка -->
+        <select 
+            id="sort-select" 
+            class="w-full sm:w-1/3 p-2 rounded-lg bg-tg-bg border border-tg-hint/50 focus:ring-tg-link focus:border-tg-link transition text-tg-text"
+            onchange="fetchProducts()"
+        >
+            <option value="name_asc">Название (А-Я)</option>
+            <option value="name_desc">Название (Я-А)</option>
+            <option value="price_asc">Цена (сначала дешевые)</option>
+            <option value="price_desc">Цена (сначала дорогие)</option>
+        </select>
             
-            <!-- Выбор валюты -->
-            <select 
-                id="currency-select" 
-                class="w-1/2 p-2 rounded-lg bg-tg-bg border border-tg-hint/50 focus:ring-tg-link focus:border-tg-link transition text-tg-text"
-                onchange="renderProducts(window.allProducts)"
-            >
-                <option value="USD">USD ($)</option>
-                <option value="RUB">RUB (₽)</option>
-            </select>
-        </div>
+        <!-- УДАЛЕН ВЫБОР ВАЛЮТЫ -->
     </div>
 
     <!-- Список товаров -->
@@ -148,11 +138,14 @@
 
 <script>
     // --- КОНФИГУРАЦИЯ ---
-    // URL вашего развернутого Flask-сервера (Замените на ваш фактический URL)
+    
+    // !!! ВАЖНО: ЗАМЕНИТЕ ЭТУ КОНСТАНТУ НА АДРЕС ВАШЕГО СЕРВЕРА RENDER !!!
     const API_BASE_URL = "https://telegram-store-server.render.com"; 
+    
     const API_URL_PRODUCTS = `${API_BASE_URL}/api/products`;
     const API_URL_ORDER = `${API_BASE_URL}/api/order`;
-    const USD_TO_RUB_RATE = 90; // Примерный курс
+    // Новая константа для курса USD -> UAH (Гривна)
+    const USD_TO_UAH_RATE = 38.5; 
 
     // Глобальные переменные для данных
     let cart = {}; // {productId: quantity}
@@ -193,8 +186,8 @@
         renderProducts(getFilteredProducts());
     }
 
-    // Расчет общей суммы
-    function calculateTotal() {
+    // Расчет общей суммы (в USD, как в базе)
+    function calculateTotalUSD() {
         let total = 0;
         const productsMap = window.allProducts.reduce((map, p) => {
             map[p.id] = p;
@@ -214,18 +207,12 @@
     
     // Обновление главной кнопки Telegram Web App
     function updateMainButton() {
-        const total = calculateTotal();
-        const currency = document.getElementById('currency-select').value;
+        const totalUSD = calculateTotalUSD();
         
         if (Object.keys(cart).length > 0) {
-            let displayTotal;
-            if (currency === 'RUB') {
-                displayTotal = (total * USD_TO_RUB_RATE).toFixed(2) + ' ₽';
-            } else {
-                displayTotal = total.toFixed(2) + ' $';
-            }
-            
-            WebApp.MainButton.setText(`🛒 Оформить заказ: ${displayTotal}`);
+            // Расчет и отображение в UAH
+            const totalUAH = (totalUSD * USD_TO_UAH_RATE).toFixed(2);
+            WebApp.MainButton.setText(`🛒 Оформить заказ: ${totalUAH} грн`);
             WebApp.MainButton.show();
         } else {
             WebApp.MainButton.hide();
@@ -264,12 +251,16 @@
 
         const url = `${API_URL_PRODUCTS}?sort_by=${sort_by}&sort_order=${sort_order}`;
         
+        console.log("Попытка загрузить товары с URL:", url);
+
         try {
             const response = await fetch(url);
+            
             if (!response.ok) {
                 // Если ошибка HTTP, выбрасываем ошибку с кодом статуса
                 throw new Error(`Ошибка HTTP: ${response.status}`);
             }
+            
             window.allProducts = await response.json();
             
             if (window.allProducts.length === 0) {
@@ -284,9 +275,9 @@
             
         } catch (error) {
             // Обработка ошибки 'Failed to fetch' или HTTP-ошибки
-            console.error("Ошибка при загрузке товаров:", error);
-            // Используем in-page сообщение, так как WebApp.showAlert может не работать
-            statusMessage.textContent = `❌ Не удалось загрузить товары. ${error.message}. Проверьте URL сервера и CORS.`;
+            console.error("❌ Ошибка при загрузке товаров:", error);
+            // Используем in-page сообщение
+            statusMessage.textContent = `❌ Не удалось загрузить товары. ${error.message}. Убедитесь, что ваш Flask-сервер запущен, URL (${API_BASE_URL}) верен и настроен CORS.`;
         }
     }
 
@@ -298,18 +289,11 @@
 
     // --- ФУНКЦИИ РЕНДЕРИНГА ---
     
-    // Форматирование цены
+    // Форматирование цены (всегда в UAH)
     function formatPrice(priceUSD) {
-        const currency = document.getElementById('currency-select').value;
         const price = parseFloat(priceUSD) || 0;
-        
-        let formattedPrice;
-        if (currency === 'RUB') {
-            formattedPrice = (price * USD_TO_RUB_RATE).toFixed(2) + ' ₽';
-        } else {
-            formattedPrice = price.toFixed(2) + ' $';
-        }
-        return formattedPrice;
+        const priceUAH = price * USD_TO_UAH_RATE;
+        return priceUAH.toFixed(2) + ' грн';
     }
 
     // Рендеринг списка товаров
@@ -396,8 +380,8 @@
                 };
             });
         
-        const totalUSD = calculateTotal();
-        const currency = document.getElementById('currency-select').value;
+        const totalUSD = calculateTotalUSD();
+        const totalUAH = totalUSD * USD_TO_UAH_RATE;
 
         const orderDetails = {
             // Данные пользователя Telegram
@@ -408,8 +392,8 @@
             // Детали заказа
             items: orderItems,
             total_usd: totalUSD,
-            total_rub: totalUSD * USD_TO_RUB_RATE,
-            currency_at_checkout: currency,
+            total_uah: totalUAH, // Добавляем сумму в гривнах
+            currency_at_checkout: 'UAH', // Указываем, что оформлено в UAH
             date: new Date().toISOString(),
             // 'status' будет добавлен на сервере Flask
         };
@@ -434,7 +418,7 @@
             const dataToSend = JSON.stringify(orderDetails);
             WebApp.sendData(dataToSend);
 
-            // Очистка и закрытие (убрали WebApp.showAlert, чтобы избежать ошибки 6.0/showPopup)
+            // Очистка и закрытие
             localStorage.removeItem('telegramStoreCart'); // Очищаем корзину
             WebApp.close(); // Закрываем Web App
             
@@ -443,7 +427,6 @@
         } catch (error) {
             console.error("❌ Ошибка при оформлении заказа:", error);
             // Используем только консоль и индикатор прогресса для обратной связи при ошибке
-            // Для реального использования лучше добавить модальное окно на самой странице.
         } finally {
             WebApp.MainButton.hideProgress(); 
         }
