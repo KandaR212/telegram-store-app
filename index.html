@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Web App Store</title>
+    <title>Telegram Web App Магазин</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        /* Использование переменных цветов Telegram */
+        /* Використання змінних кольорів Telegram */
         :root {
             --bg-color: var(--tg-theme-bg-color, #ffffff);
             --secondary-bg-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
@@ -17,18 +17,17 @@
             --button-text-color: var(--tg-theme-button-text-color, #ffffff);
             --link-color: var(--tg-theme-link-color, #2b84ff);
 
-            /* НОВЫЕ: Розовые цвета */
-            --pink-light: #FFEDED; /* Очень светлый розовый для фона */
-            --pink-medium: #FFC0CB; /* Средний розовый для фона карточек/элементов */
-            --pink-dark: #FF69B4; /* Темно-розовый для кнопок/важных элементов */
-            --pink-text: #880044; /* Темно-розовый для заголовков/акцентного текста */
+            /* НОВІ: Рожеві кольори */
+            --pink-light: #FFEDED; /* Дуже світлий рожевий для фону */
+            --pink-medium: #FFC0CB; /* Середній рожевий для фону карток/елементів */
+            --pink-dark: #FF69B4; /* Темно-рожевий для кнопок/важливих елементів */
+            --pink-text: #880044; /* Темно-рожевий для заголовків/акцентного тексту */
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
             margin: 0;
             padding: 10px;
-            /* ИСПОЛЬЗУЕМ РОЗОВЫЙ ФОН */
             background-color: var(--pink-light); 
             color: var(--text-color);
             transition: background-color 0.3s;
@@ -52,27 +51,26 @@
         }
 
         .product-item {
-            /* ИСПОЛЬЗУЕМ СВЕТЛЫЙ РОЗОВЫЙ ДЛЯ ФОНА КАРТОЧЕК */
             background-color: var(--pink-medium); 
             border-radius: 12px;
             overflow: hidden;
             text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Более выразительная тень */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
             display: flex;
             flex-direction: column;
-            cursor: pointer; /* Для показа деталей */
+            cursor: pointer; 
             transition: transform 0.2s ease-in-out;
         }
 
         .product-item:hover {
-            transform: translateY(-3px); /* Эффект при наведении */
+            transform: translateY(-3px); 
         }
 
         .product-image {
             width: 100%;
-            height: 120px; /* Фиксированная высота для единообразия */
-            object-fit: cover; /* Обрезает, чтобы заполнить, сохраняя пропорции */
-            background-color: #f0e0e0; /* Светло-розовый плейсхолдер */
+            height: 120px; 
+            object-fit: cover; 
+            background-color: #f0e0e0; 
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
 
@@ -87,7 +85,7 @@
         .product-info h3 {
             font-size: 16px;
             margin: 0 0 5px;
-            color: var(--pink-text); /* Розовый заголовок */
+            color: var(--pink-text); 
         }
         
         .product-description {
@@ -95,20 +93,20 @@
             color: var(--hint-color);
             margin: 0 0 10px;
             line-height: 1.3;
-            height: 3.9em; /* 3 строки текста */
+            height: 3.9em; 
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .product-price {
             font-weight: bold;
-            color: var(--pink-dark); /* Темно-розовая цена */
+            color: var(--pink-dark); 
             font-size: 18px;
             margin: 5px 0 10px;
         }
 
         .add-to-cart-btn {
-            background-color: var(--pink-dark); /* Темно-розовая кнопка */
+            background-color: var(--pink-dark); 
             color: var(--button-text-color);
             border: none;
             padding: 8px 15px;
@@ -116,16 +114,16 @@
             cursor: pointer;
             font-size: 14px;
             width: 100%;
-            margin-top: auto; /* Прижимает кнопку к низу */
+            margin-top: auto; 
             transition: background-color 0.2s;
         }
         .add-to-cart-btn:hover {
-            background-color: #e04a99; /* Чуть темнее при наведении */
+            background-color: #e04a99; 
         }
         
-        /* --- Корзина --- */
+        /* --- Кошик --- */
         .cart-item {
-            background-color: var(--pink-medium); /* Розовые элементы корзины */
+            background-color: var(--pink-medium); 
             border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             padding: 10px;
@@ -136,7 +134,7 @@
         }
         
         .qty-btn {
-            background-color: var(--pink-dark); /* Розовые кнопки +/- */
+            background-color: var(--pink-dark); 
             color: var(--button-text-color);
             border: none;
             width: 28px;
@@ -154,18 +152,18 @@
             padding: 15px 0;
             font-size: 18px;
             font-weight: bold;
-            border-top: 1px solid var(--pink-text); /* Розовый разделитель */
+            border-top: 1px solid var(--pink-text); 
             margin-top: 15px;
             color: var(--pink-dark);
         }
 
-        /* Изменения для полей ввода (чтобы соответствовать теме) */
+        /* Стилі для полів введення */
         #contact-name, #delivery-address {
-            background-color: var(--secondary-bg-color); /* Или var(--pink-light) */
+            background-color: var(--secondary-bg-color); 
             border: 1px solid var(--pink-medium) !important;
         }
 
-        /* --- Модальное окно для деталей товара (НОВОЕ) --- */
+        /* --- Модальне вікно для деталей товару --- */
         .modal {
             display: none; 
             position: fixed; 
@@ -215,17 +213,16 @@
 
         .detail-image-gallery {
             display: flex;
-            overflow-x: auto; /* Прокрутка для нескольких изображений */
+            overflow-x: auto; 
             scroll-snap-type: x mandatory;
             gap: 10px;
             margin-bottom: 15px;
             border-radius: 8px;
             background-color: var(--secondary-bg-color);
             padding: 10px;
-            min-height: 250px; /* Минимальная высота, чтобы не "прыгало" */
+            min-height: 250px; 
         }
 
-        /* Стиль для полосы прокрутки, чтобы она соответствовала розовой теме */
         .detail-image-gallery::-webkit-scrollbar {
             height: 8px;
         }
@@ -240,15 +237,15 @@
 
         .detail-image-gallery img {
             flex-shrink: 0; 
-            width: 100%; /* Каждое изображение на всю ширину контейнера при прокрутке */
+            width: 100%; 
             max-width: 100%; 
-            height: 250px; /* Фиксированная высота */
-            object-fit: contain; /* Вписывает изображение, сохраняя пропорции */
+            height: 250px; 
+            object-fit: contain; 
             border-radius: 8px;
             scroll-snap-align: start;
             background-color: #f0f0f0;
         }
-        /* Если только одно изображение, центрируем его */
+        
         .detail-image-gallery.single-image {
             justify-content: center;
             overflow-x: hidden;
@@ -303,22 +300,22 @@
     <div id="app-container">
         
         <div id="catalog-view">
-            <h2>🛍️ Каталог товаров</h2>
+            <h2>🛍️ Каталог товарів</h2>
             <div id="catalog" class="catalog-grid">
                 </div>
         </div>
         
         <div id="cart-view" style="display: none;">
-            <h2>🛒 Ваша корзина</h2>
+            <h2>🛒 Ваш кошик</h2>
             <div id="cart-items">
                 </div>
             <div id="order-form">
-                <h3>Контактные данные</h3>
-                <input type="text" id="contact-name" placeholder="Ваше имя" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: 1px solid var(--hint-color); background-color: var(--secondary-bg-color); color: var(--text-color);" required>
-                <input type="text" id="delivery-address" placeholder="Адрес доставки" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: 1px solid var(--hint-color); background-color: var(--secondary-bg-color); color: var(--text-color);" required>
+                <h3>Контактні дані та доставка</h3>
+                <input type="text" id="contact-name" placeholder="Ваше ім'я" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: 1px solid var(--hint-color); background-color: var(--secondary-bg-color); color: var(--text-color);" required>
+                <input type="text" id="delivery-address" placeholder="Адреса доставки" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: 1px solid var(--hint-color); background-color: var(--secondary-bg-color); color: var(--text-color);" required>
             </div>
             <div id="cart-total" class="total-info">
-                Итого: 0 руб.
+                Всього: 0 грн.
             </div>
         </div>
         
@@ -339,18 +336,19 @@
     <script>
         const WebApp = window.Telegram.WebApp;
         
-        // --- 1. НАСТРОЙКИ ---
+        // --- 1. НАЛАШТУВАННЯ ---
+        // Використовуйте ваш актуальний API_URL_BASE
         const API_URL_BASE = 'https://telegram-flask1-api.onrender.com'; 
         const API_URL_PRODUCTS = API_URL_BASE + '/api/products';
         const API_URL_ORDER = API_URL_BASE + '/api/order';
         
-        // Массивы для хранения данных
+        // Масиви для зберігання даних
         let allProducts = [];
         let cart = JSON.parse(localStorage.getItem('telegramStoreCart')) || {}; // {itemId: {name, price, qty}}
-        let currentView = 'catalog'; // 'catalog' или 'cart'
-        let currentProductInDetail = null; // Для отслеживания товара в модальном окне (НОВОЕ)
+        let currentView = 'catalog'; // 'catalog' або 'cart'
+        let currentProductInDetail = null; 
 
-        // --- 2. ФУНКЦИИ ИНИЦИАЛИЗАЦИИ ---
+        // --- 2. ФУНКЦІЇ ІНІЦІАЛІЗАЦІЇ ---
 
         function initApp() {
             if (!WebApp.isExpanded) {
@@ -358,10 +356,9 @@
             }
             WebApp.ready();
             
-            // Настраиваем кнопку для переключения/оформления
             WebApp.MainButton.show();
             WebApp.MainButton.onClick(handleMainButtonClick);
-            WebApp.onEvent('backButtonClicked', handleBackButtonClick); // Подписка на общую кнопку "Назад" Telegram
+            WebApp.onEvent('backButtonClicked', handleBackButtonClick);
 
             loadProducts();
             
@@ -371,36 +368,39 @@
             }
         }
         
-        // --- 3. ЗАГРУЗКА ДАННЫХ ---
+        // --- 3. ЗАВАНТАЖЕННЯ ДАНИХ ---
         
         async function loadProducts() {
             const catalogElement = document.getElementById('catalog');
-            catalogElement.innerHTML = '<p style="text-align: center; color: var(--hint-color);">Загрузка каталога...</p>';
+            catalogElement.innerHTML = '<p style="text-align: center; color: var(--hint-color);">Завантаження каталогу...</p>';
             
             try {
                 const response = await fetch(API_URL_PRODUCTS); 
                 if (!response.ok) {
-                    throw new Error(`Ошибка HTTP: ${response.status}`);
+                    throw new Error(`Помилка HTTP: ${response.status}`);
                 }
                 allProducts = await response.json();
                 
                 displayProducts(allProducts);
                 updateMainButton(); 
             } catch (error) {
-                console.error("Не удалось загрузить товары с API:", error);
-                catalogElement.innerHTML = '<h2>❌ Не удалось загрузить каталог. Проверьте сервер.</h2>';
+                console.error("Не вдалося завантажити товари з API:", error);
+                catalogElement.innerHTML = '<h2>❌ Не вдалося завантажити каталог. Перевірте сервер.</h2>';
                 WebApp.MainButton.hide();
             }
         }
 
-        // --- 4. ОТОБРАЖЕНИЕ ИНТЕРФЕЙСА ---
+        // --- 4. ВІДОБРАЖЕННЯ ІНТЕРФЕЙСУ ---
         
-        // ИЗМЕНЕНО: Добавлен onclick для детального просмотра и event.stopPropagation() для кнопки "В корзину"
         function displayProducts(products) {
             const catalogElement = document.getElementById('catalog');
             catalogElement.innerHTML = ''; 
 
             products.forEach(product => {
+                // Використання грн
+                const priceFormatted = (product.price || 0).toFixed(2) + ' грн.';
+                const qty = cart[product.id] ? cart[product.id].qty : 0;
+                
                 const itemHtml = `
                     <div class="product-item" data-id="${product.id}" onclick="showProductDetail('${product.id}')">
                         <img src="${product.image_url}" alt="${product.name}" class="product-image">
@@ -409,9 +409,9 @@
                                 <h3>${product.name}</h3>
                                 <p class="product-description">${product.description ? product.description : ''}</p>
                             </div>
-                            <p class="product-price">${(product.price || 0).toFixed(2)} руб.</p>
+                            <p class="product-price">${priceFormatted}</p>
                             <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product.id}')">
-                                ${cart[product.id] ? 'Добавлено (' + cart[product.id].qty + ')' : 'В корзину'}
+                                ${qty > 0 ? `Додано (${qty})` : 'В кошик'}
                             </button>
                         </div>
                     </div>
@@ -437,7 +437,7 @@
                         <div class="cart-item">
                             <div class="cart-item-info">
                                 <b>${item.name}</b><br>
-                                ${item.qty} x ${item.price.toFixed(2)} руб. = ${itemTotal.toFixed(2)} руб.
+                                ${item.qty} x ${item.price.toFixed(2)} грн. = ${itemTotal.toFixed(2)} грн.
                             </div>
                             <div class="cart-item-controls">
                                 <button class="qty-btn" onclick="updateCartQty('${id}', -1)">-</button>
@@ -451,17 +451,17 @@
             }
             
             if (cartEmpty) {
-                cartItemsElement.innerHTML = '<p style="text-align: center; color: var(--hint-color);">Корзина пуста 😔</p>';
+                cartItemsElement.innerHTML = '<p style="text-align: center; color: var(--hint-color);">Кошик порожній 😔</p>';
                 document.getElementById('order-form').style.display = 'none';
                 total = 0;
             } else {
                 document.getElementById('order-form').style.display = 'block';
             }
 
-            document.getElementById('cart-total').innerHTML = `Итого: ${total.toFixed(2)} руб.`;
+            document.getElementById('cart-total').innerHTML = `Всього: ${total.toFixed(2)} грн.`;
         }
         
-        // --- НОВЫЕ: ДЕТАЛИ ТОВАРА (Модальное окно) ---
+        // --- ДЕТАЛІ ТОВАРУ (Модальне вікно) ---
 
         function showProductDetail(productId) {
             const product = allProducts.find(p => p.id === productId);
@@ -469,17 +469,17 @@
 
             currentProductInDetail = product; 
 
-            // Заполняем модальное окно данными
+            // Заповнюємо модальне вікно даними (використовуємо грн)
             document.getElementById('detail-title').textContent = product.name;
             document.getElementById('detail-description').textContent = product.description;
-            document.getElementById('detail-price').textContent = `${(product.price || 0).toFixed(2)} руб.`;
+            document.getElementById('detail-price').textContent = `${(product.price || 0).toFixed(2)} грн.`;
 
             const galleryElement = document.getElementById('detail-image-gallery');
             galleryElement.innerHTML = '';
             
             const images = (Array.isArray(product.images_url) && product.images_url.length > 0) 
                            ? product.images_url 
-                           : [product.image_url]; // Используем основное, если доп. нет
+                           : [product.image_url];
             
             if (images.length > 1) {
                 galleryElement.classList.remove('single-image');
@@ -494,52 +494,54 @@
                 galleryElement.appendChild(img);
             });
 
-            // Обновляем текст кнопки "В корзину" в модальном окне
+            // Оновлюємо текст кнопки "В кошик" у модальному вікні
             const detailAddBtn = document.getElementById('detail-add-to-cart-btn');
-            if (cart[product.id]) {
-                detailAddBtn.textContent = `Добавлено в корзину (${cart[product.id].qty})`;
+            const qty = cart[product.id] ? cart[product.id].qty : 0;
+            
+            if (qty > 0) {
+                detailAddBtn.textContent = `Додано до кошика (${qty})`;
             } else {
-                detailAddBtn.textContent = 'Добавить в корзину';
+                detailAddBtn.textContent = 'Додати до кошика';
             }
             detailAddBtn.dataset.productId = product.id; 
 
-            // Показываем модальное окно
+            // Показуємо модальне вікно
             document.getElementById('product-detail-modal').style.display = 'block';
             WebApp.MainButton.hide(); 
             WebApp.BackButton.show(); 
-            // Обработчик "Назад" теперь будет закрывать модальное окно, пока оно открыто
+            // Вимикаємо загальний обробник і вмикаємо обробник для модального вікна
             WebApp.offEvent('backButtonClicked', handleBackButtonClick); 
             WebApp.onEvent('backButtonClicked', closeProductDetail); 
         }
 
         function closeProductDetail() {
             document.getElementById('product-detail-modal').style.display = 'none';
-            // Отписываемся от закрытия модального окна и восстанавливаем общий обработчик
+            // Відписуємось від закриття модального вікна та відновлюємо загальний обробник
             WebApp.offEvent('backButtonClicked', closeProductDetail); 
             WebApp.onEvent('backButtonClicked', handleBackButtonClick);
 
-            // Восстанавливаем состояние кнопки "Назад" и Главной кнопки в зависимости от текущего вида
-            if (currentView === 'cart') {
-                WebApp.BackButton.show();
-            } else {
-                WebApp.BackButton.hide();
-            }
+            // Відновлюємо стан кнопок
             updateMainButton(); 
+            if (currentView === 'catalog') {
+                WebApp.BackButton.hide();
+            } else { // 'cart'
+                WebApp.BackButton.show();
+            }
         }
 
         function addToCartFromDetail() {
             if (currentProductInDetail) {
                 addToCart(currentProductInDetail.id);
-                // Обновляем текст кнопки в модальном окне
+                // Оновлюємо текст кнопки в модальному вікні
                 const detailAddBtn = document.getElementById('detail-add-to-cart-btn');
                 if (cart[currentProductInDetail.id]) {
-                    detailAddBtn.textContent = `Добавлено в корзину (${cart[currentProductInDetail.id].qty})`;
+                    detailAddBtn.textContent = `Додано до кошика (${cart[currentProductInDetail.id].qty})`;
                 }
-                WebApp.showPopup({message: `"${currentProductInDetail.name}" добавлен в корзину!`});
+                WebApp.showPopup({message: `"${currentProductInDetail.name}" додано до кошика!`});
             }
         }
         
-        // --- 5. ЛОГИКА КОРЗИНЫ ---
+        // --- 5. ЛОГІКА КОШИКА ---
         
         function addToCart(productId) {
             const product = allProducts.find(p => p.id === productId);
@@ -557,15 +559,12 @@
             
             saveCart();
             
-            // Обновляем кнопку в каталоге
-            const btn = document.querySelector(`.product-item[data-id="${productId}"] .add-to-cart-btn`);
-            if (btn) {
-                btn.textContent = `Добавлено (${cart[productId].qty})`;
-            }
+            // ОНОВЛЕННЯ: Додано повне оновлення каталогу, щоб уникнути проблем з рендерингом кнопки
+            displayProducts(allProducts); 
             
-            // Обновляем кнопку в модальном окне, если оно открыто
+            // Оновлюємо кнопку в модальному вікні, якщо воно відкрите
             if (currentProductInDetail && currentProductInDetail.id === productId) {
-                document.getElementById('detail-add-to-cart-btn').textContent = `Добавлено в корзину (${cart[productId].qty})`;
+                document.getElementById('detail-add-to-cart-btn').textContent = `Додано до кошика (${cart[productId].qty})`;
             }
             
             updateMainButton();
@@ -585,7 +584,7 @@
             if (currentView === 'cart') {
                 renderCart();
             } else {
-                displayProducts(allProducts); // Обновляем кнопки в каталоге
+                displayProducts(allProducts); // Повне оновлення для коректного відображення
             }
             updateMainButton();
         }
@@ -606,30 +605,32 @@
             return { total: total, count: count };
         }
         
-        // --- 6. УПРАВЛЕНИЕ КНОПКОЙ ТЕЛЕГРАМ ---
+        // --- 6. КЕРУВАННЯ КНОПКОЮ ТЕЛЕГРАМ ---
         
         function updateMainButton() {
             const { total, count } = getCartTotal();
+            const totalFormatted = total.toFixed(2) + ' грн.';
             
             if (currentView === 'catalog' && count > 0) {
-                WebApp.MainButton.setText(`Перейти в Корзину (${count} шт. | ${total.toFixed(2)} руб.)`);
+                WebApp.MainButton.setText(`Перейти до кошика (${count} шт. | ${totalFormatted})`);
                 WebApp.MainButton.enable();
             } else if (currentView === 'catalog' && count === 0) {
-                 WebApp.MainButton.setText(`Корзина пуста`);
+                 WebApp.MainButton.setText(`Кошик порожній`);
                  WebApp.MainButton.disable();
             } else if (currentView === 'cart' && count > 0) {
-                WebApp.MainButton.setText(`Оформить заказ (${total.toFixed(2)} руб.)`);
+                WebApp.MainButton.setText(`Оформити замовлення (${totalFormatted})`);
                 WebApp.MainButton.enable();
-            } else { // Корзина пуста на странице корзины
-                WebApp.MainButton.setText(`Вернуться в каталог`);
+            } else { // Кошик порожній на сторінці кошика
+                WebApp.MainButton.setText(`Повернутися до каталогу`);
                 WebApp.MainButton.enable();
             }
+            WebApp.MainButton.setParams({color: '#FF69B4'}); // Задаємо рожевий колір кнопці Telegram
         }
         
         function handleMainButtonClick() {
             if (currentView === 'catalog') {
                 if (getCartTotal().count > 0) {
-                    // Переход в корзину
+                    // Перехід у кошик
                     currentView = 'cart';
                     document.getElementById('catalog-view').style.display = 'none';
                     document.getElementById('cart-view').style.display = 'block';
@@ -641,30 +642,33 @@
                 if (getCartTotal().count > 0) {
                     placeOrder();
                 } else {
-                    // Вернуться в каталог, если корзина пуста
+                    // Повернутися в каталог, якщо кошик порожній
                     handleBackButtonClick(); 
                 }
             }
         }
         
-        // ИЗМЕНЕНО: Обработчик кнопки "Назад"
+        // ВИПРАВЛЕНО: Обробник кнопки "Назад"
         function handleBackButtonClick() {
+             // Спочатку перевіряємо, чи відкрите модальне вікно
              if (document.getElementById('product-detail-modal').style.display === 'block') {
-                 // Если открыто модальное окно, закрываем его
                  closeProductDetail();
                  return;
              }
             
+             // Логіка переходу Кошик -> Каталог
              if (currentView === 'cart') {
                 currentView = 'catalog';
                 document.getElementById('catalog-view').style.display = 'block';
                 document.getElementById('cart-view').style.display = 'none';
                 WebApp.BackButton.hide(); 
-                updateMainButton();
+                // Не викликаємо displayProducts тут, оскільки це відбувається в updateCartQty,
+                // але викликаємо updateMainButton для оновлення тексту
+                updateMainButton(); 
             }
         }
         
-        // --- 7. ОТПРАВКА ЗАКАЗА И СОХРАНЕНИЕ В DB ---
+        // --- 7. ВІДПРАВКА ЗАМОВЛЕННЯ І ЗБЕРЕЖЕННЯ В DB ---
         
         async function placeOrder() {
             const { total, count } = getCartTotal();
@@ -672,7 +676,7 @@
             const address = document.getElementById('delivery-address').value;
 
             if (!contactName || !address) {
-                WebApp.showAlert('Пожалуйста, заполните Имя и Адрес доставки.');
+                WebApp.showAlert('Будь ласка, заповніть Ім\'я та Адресу доставки.');
                 return;
             }
             
@@ -689,7 +693,7 @@
             };
 
             try {
-                // 1. Отправка заказа на ваш Flask-сервер для сохранения в Firestore
+                // 1. Відправка замовлення на ваш Flask-сервер для збереження в Firestore
                 const dbResponse = await fetch(API_URL_ORDER, {
                     method: 'POST',
                     headers: {
@@ -699,28 +703,28 @@
                 });
 
                 if (!dbResponse.ok) {
-                    throw new Error(`Ошибка сервера (${dbResponse.status}) при сохранении заказа.`);
+                    throw new Error(`Помилка сервера (${dbResponse.status}) при збереженні замовлення.`);
                 }
                 
-                // 2. После успешного сохранения в Firestore, отправляем данные боту
+                // 2. Після успішного збереження в Firestore, відправляємо дані боту
                 const dataToSend = JSON.stringify(orderDetails);
                 WebApp.sendData(dataToSend);
 
-                // Оповещение, очистка и закрытие
-                WebApp.showAlert('✅ Ваш заказ принят! Бот скоро ответит.', () => {
-                    localStorage.removeItem('telegramStoreCart'); // Очищаем корзину
-                    WebApp.close(); // Закрываем Web App
+                // Сповіщення, очищення та закриття
+                WebApp.showAlert('✅ Ваше замовлення прийнято! Бот скоро відповість.', () => {
+                    localStorage.removeItem('telegramStoreCart'); // Очищуємо кошик
+                    WebApp.close(); // Закриваємо Web App
                 });
 
             } catch (error) {
-                console.error("Ошибка при оформлении заказа:", error);
-                WebApp.showAlert('❌ Не удалось оформить заказ. Проверьте подключение к серверу или данные.');
+                console.error("Помилка при оформленні замовлення:", error);
+                WebApp.showAlert('❌ Не вдалося оформити замовлення. Перевірте підключення до сервера або дані.');
             } finally {
                 WebApp.MainButton.hideProgress(); 
             }
         }
 
-        // --- ИНИЦИАЛИЗАЦИЯ ---
+        // --- ІНІЦІАЛІЗАЦІЯ ---
         initApp();
     </script>
 </body>
