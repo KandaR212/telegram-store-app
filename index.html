@@ -103,6 +103,32 @@
             color: var(--pink-dark); 
             font-size: 18px;
             margin: 5px 0 10px;
+            display: block;
+        }
+
+        .original-price {
+            color: var(--hint-color); /* Серый цвет */
+            font-size: 14px;
+            text-decoration: line-through; /* Зачеркнутый текст */
+            margin-right: 10px;
+            font-weight: normal;
+        }
+
+        .discount-badge {
+            background-color: #e6005c; /* Яркий цвет для скидки */
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .price-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 5px 0 10px;
         }
 
         .add-to-cart-btn {
@@ -460,6 +486,32 @@
                 const priceFormatted = (product.price || 0).toFixed(2) + ' грн.';
                 const qty = cart[product.id] ? cart[product.id].qty : 0;
                 
+                const finalPrice = product.final_price || 0; 
+                const originalPrice = product.original_price || 0;
+                const isOnSale = product.is_on_sale;
+                const discount = product.discount_percentage || 0;
+
+                const finalPriceFormatted = finalPrice.toFixed(2) + ' грн.';
+
+                // HTML для отображения цены
+                let priceHtml = '';
+                if (isOnSale && originalPrice > finalPrice) {
+                    // Если есть скидка
+                    priceHtml = `
+                        <div class="price-display">
+                            <span class="original-price">${originalPrice.toFixed(2)} грн.</span>
+                            <span class="product-price">${finalPriceFormatted}</span>
+                            <span class="discount-badge">-${discount}%</span>
+                        </div>
+                    `;
+                } else {
+                    // Если нет скидки
+                    priceHtml = `<p class="product-price">${finalPriceFormatted}</p>`;
+                }
+                // --- КОНЕЦ НОВЫХ ПЕРЕМЕННЫХ ---
+
+                const qty = cart[product.id] ? cart[product.id].qty : 0;
+
                 const itemHtml = `
                     <div class="product-item" data-id="${product.id}" onclick="showProductDetail('${product.id}')">
                         <img src="${product.image_url}" alt="${product.name}" class="product-image">
@@ -468,7 +520,9 @@
                                 <h3>${product.name}</h3>
                                 <p class="product-description">${product.description ? product.description : ''}</p>
                             </div>
-                            <p class="product-price">${priceFormatted}</p>
+
+                            ${priceHtml} 
+
                             <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product.id}')">
                                 ${qty > 0 ? `Додано (${qty})` : 'В кошик'}
                             </button>
@@ -606,12 +660,15 @@
             const product = allProducts.find(p => p.id === productId);
             if (!product) return;
 
+            // --- ИЗМЕНЕНИЕ ЗДЕСЬ: Используем final_price ---
+            const priceToUse = product.final_price || 0; 
+
             if (cart[productId]) {
                 cart[productId].qty += 1;
             } else {
                 cart[productId] = {
                     name: product.name,
-                    price: product.price || 0,
+                    price: priceToUse, // Сохраняем финальную цену
                     qty: 1
                 };
             }
